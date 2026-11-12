@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "study-trail",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true },
+  // 每天 UTC 19:00（北京时间 03:00）清理过期会话、旧通知与审计日志
+  "triggers": { "crons": ["0 19 * * *"] },
+  // 不写 database_id：首次部署时 Cloudflare 自动创建 D1 数据库，之后沿用已绑定的数据库
+  "d1_databases": [{ "binding": "DB" }],
+  // 不写 bucket_name：首次部署时自动创建 R2 存储桶，用于保存加密后的附件
+  "r2_buckets": [{ "binding": "FILES" }],
+
+  // ===== 可选：用 KV 代替 R2 保存加密文件 =====
+  // 默认使用上面的 R2（FILES）。如果只想用 KV：
+  //   1. 注释或删除 "r2_buckets" 这一行；
+  //   2. 执行 `wrangler kv namespace create FILE_KV`，把返回的 id 填到下面；
+  //   3. 取消下面 kv_namespaces 的注释后重新部署。
+  // 同时绑定 R2 与 KV 时默认仍使用 R2，可设置 FILE_STORAGE=kv 强制使用 KV。
+  // "kv_namespaces": [{ "binding": "FILE_KV", "id": "<KV_NAMESPACE_ID>" }],
+  // "vars": { "FILE_STORAGE": "kv" }
+
+  // ===== 可选：固定文件加密密钥 =====
+  // 不配置时，首次上传会自动生成 32 字节 AES-256-GCM 密钥并保存到 D1，
+  // 同一 D1 数据库的多个实例会共享同一密钥。若手动配置，支持 Base64、
+  // 64 位十六进制或 32 字符原始密钥；更换密钥会导致旧文件无法解密。
+  // "vars": { "FILE_ENCRYPTION_KEY": "<32-byte-secret>" }
+}

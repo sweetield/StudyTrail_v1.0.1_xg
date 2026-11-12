@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --color-background: #f6f6f3;
+  --color-foreground: #1c1917;
+  --color-card: #ffffff;
+  --color-muted: #efefea;
+  --color-muted-foreground: #6b6862;
+  --color-border: #e4e3dd;
+  --color-ring: #0f766e;
+
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-primary-foreground: #ffffff;
+  --color-primary-soft: #e6f4f1;
+
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf3e1;
+  --color-destructive: #be123c;
+  --color-destructive-soft: #fdeceF;
+
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  * {
+    @apply border-border;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  dialog::backdrop {
+    background: rgb(28 25 23 / 0.45);
+  }
+}
